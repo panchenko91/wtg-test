@@ -1,0 +1,38 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/web/nginx-site.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/html
+    networks:
+      - default
+
+  php:
+    image: php-fpm:wtg
+    build: docker/build/php
+    volumes:
+      - ./public:/var/www/html
+    networks:
+      default:
+
+  mysql:
+    ports:
+      - "3306:3306"
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: wtg_db
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: 12345678
+    volumes:
+      - wtg_db:/var/lib/mysql
+    networks:
+      - default
+
+volumes:
+  wtg:
+
+networks:
+  default:
