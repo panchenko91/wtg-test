@@ -4,11 +4,14 @@ namespace App\Models;
 
 use App\Enums\ImportStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['status', 'supplier_id', 'raw_offers', 'error', 'sent_at', 'completed_at'])]
+#[Fillable(['status', 'external_id', 'supplier_id', 'raw_offers', 'error', 'sent_at', 'completed_at'])]
 class Import extends Model
 {
+    use HasFactory;
+
     /**
      * Get the attributes that should be cast.
      *
@@ -32,6 +35,13 @@ class Import extends Model
     public function getTotalOffersAttribute(): int
     {
         return count($this->raw_offers);
+    }
+
+    public function processing()
+    {
+        $this->fill([
+            'status' => ImportStatus::Processing,
+        ])->save();
     }
 
     public function completed()

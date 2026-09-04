@@ -11,4 +11,9 @@ class Supplier extends Model
 {
     /** @use HasFactory<\Database\Factories\SupplierFactory> */
     use HasFactory;
+
+    public static function byExternalId(string $externalId)
+    {
+        return self::query()->where('external_id', $externalId)->first();
+    }
 }
