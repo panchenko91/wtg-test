@@ -10,4 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 class Property extends Model
 {
     use HasFactory;
+
+    public function offers()
+    {
+        return $this->hasMany(Offer::class);
+    }
 }

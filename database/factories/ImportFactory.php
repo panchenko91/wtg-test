@@ -18,7 +18,7 @@ class ImportFactory extends Factory
     {
         return [
             'supplier_id' => Supplier::factory(),
-            'external_id' => 'import-' . $this->faker->unique()->numerify('2026-09-01-###'),
+            'external_id' => sprintf('import-%s', fake()->unique()->numerify('2026-09-01-###')),
             'status' => ImportStatus::Created,
             'raw_offers' => [],
             'total_imported' => 0,

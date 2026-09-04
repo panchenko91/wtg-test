@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Import;
 
-use App\Http\Resources\SupplierReource;
+use App\Http\Resources\SupplierResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,7 +16,7 @@ class ImportResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'supplier' => SupplierReource::make($this->whenLoaded('supplier')),
+            'supplier' => SupplierResource::make($this->whenLoaded('supplier')),
             'external_id' => $this->resource->external_id,
             'sent_at' => $this->resource->sent_at,
             'status' => $this->resource->status->asText(),
