@@ -18,8 +18,8 @@ class SupplierFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
-            'external_id' => $this->faker->randomLetter(),
+            'name' => fake()->name(),
+            'external_id' => sprintf('supplier-%s',fake()->unique()->numerify('####')),
         ];
     }
 }
