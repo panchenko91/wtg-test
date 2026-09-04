@@ -42,6 +42,10 @@ class SuppliersTableSeeder extends Seeder
                 'name' => 'supplier-a',
                 'external_id' => 'supplier-a',
             ],
+            [
+                'name' => 'supplier-b',
+                'external_id' => 'supplier-b',
+            ],
         ];
     }
 }

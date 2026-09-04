@@ -36,6 +36,11 @@ class PropertySearchTest extends TestCase
         ], $overrides));
     }
 
+    private function offerFrom(Supplier $supplier, Property $property, array $overrides = []): Offer
+    {
+        return $this->offer($property, array_merge(['supplier_id' => $supplier->id], $overrides));
+    }
+
     private function property(array $overrides = []): Property
     {
         return Property::factory()->create(array_merge([
@@ -275,6 +280,46 @@ class PropertySearchTest extends TestCase
                 'price'       => 50000 + $i * 1000,
             ]);
         }
+    }
+
+    // =====================================================================
+    //  Several suppliers compete for the same property
+    // =====================================================================
+
+    /**
+     * The cheapest offer is picked across ALL suppliers, not per supplier:
+     * one property must still yield exactly one best_offer.
+     */
+    public function test_best_offer_is_cheapest_across_suppliers(): void
+    {
+        $supplierB = Supplier::factory()->create(['external_id' => 'supplier-b']);
+
+        $p = $this->property();
+        $this->offerFrom($this->supplier, $p, ['external_id' => 'from-a', 'price' => 70000]);
+        $this->offerFrom($supplierB,      $p, ['external_id' => 'from-b', 'price' => 55000]);
+
+        $this->search()
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.best_offer.price', 55000)
+            ->assertJsonPath('data.0.best_offer.supplier.external_id', 'supplier-b');
+    }
+
+    /**
+     * A disqualified offer from one supplier must not shadow a valid,
+     * more expensive offer from another.
+     */
+    public function test_cheaper_offer_from_other_supplier_is_skipped_when_it_does_not_qualify(): void
+    {
+        $supplierB = Supplier::factory()->create(['external_id' => 'supplier-b']);
+
+        $p = $this->property();
+        $this->offerFrom($supplierB,      $p, ['external_id' => 'b-expired', 'price' => 10000, 'expires_at' => now()->subDay()]);
+        $this->offerFrom($this->supplier, $p, ['external_id' => 'a-valid',   'price' => 70000]);
+
+        $this->search()
+            ->assertJsonPath('data.0.best_offer.price', 70000)
+            ->assertJsonPath('data.0.best_offer.supplier.external_id', 'supplier-a');
     }
 
     public function test_pagination_exposes_per_page_next_and_prev(): void
