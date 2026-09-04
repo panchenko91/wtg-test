@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# start the queue
+php artisan queue:work $@ &
+
+echo "The queue process started with pid: $!"
+
+# trap SIGINT and SIGTERM signals and gracefully exit
+trap "echo \"Killing the queue process\"; kill -SIGTERM \$!; exit" SIGINT SIGTERM
+
+# wait until queue is stopped
+wait $!

@@ -13,7 +13,7 @@ services:
     image: php-fpm:wtg
     build: docker/build/php
     volumes:
-      - ./public:/var/www/html
+      - .:/var/www/html
     networks:
       default:
 
@@ -31,8 +31,18 @@ services:
     networks:
       - default
 
+  queue:
+    image: queue:wtg
+    build: docker/build/queue
+    depends_on:
+      - mysql
+    volumes:
+      - .:/var/www/html
+    networks:
+      - default
+
 volumes:
-  wtg:
+  wtg_db:
 
 networks:
   default:
