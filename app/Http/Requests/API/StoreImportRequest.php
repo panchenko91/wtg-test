@@ -16,15 +16,15 @@ class StoreImportRequest extends FormRequest
     {
         return [
             'supplier' => ['required', 'string', 'exists:suppliers,external_id'],
-            'external_id' => ['required'],
+            'external_id' => ['required', 'string', 'max:255'],
             'offers' => ['required', 'array', 'min:1'],
             'sent_at' => ['required', 'date'],
 
-            'offers.*.external_id' => ['required'],
+            'offers.*.external_id' => ['required', 'string', 'max:255'],
             'offers.*.property' => ['required', 'array'],
-            'offers.*.property.code' => ['required'],
-            'offers.*.property.name' => ['required'],
-            'offers.*.property.city' => ['required'],
+            'offers.*.property.code' => ['required', 'string', 'max:255'],
+            'offers.*.property.name' => ['required', 'string', 'max:255'],
+            'offers.*.property.city' => ['required', 'string', 'max:255'],
             'offers.*.check_in' => ['required', 'date'],
             'offers.*.check_out' => ['required', 'date', 'after:offers.*.check_in'],
             'offers.*.max_guests' => ['required', 'integer', 'min:1'],
