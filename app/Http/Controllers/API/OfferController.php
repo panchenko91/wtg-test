@@ -9,6 +9,7 @@ use App\Http\Resources\ReservationResource;
 use App\Models\Offer;
 use App\Services\Reservation\ReservationManager;
 use App\Services\Reservation\ReservationTransformer;
+use Symfony\Component\HttpFoundation\Response;
 
 class OfferController extends Controller
 {
@@ -21,7 +22,7 @@ class OfferController extends Controller
         } catch (OfferUnavailableException $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
-            ], 422);
+            ], 409);
         }
 
         $status = $reservation->wasRecentlyCreated ? 201 : 200;

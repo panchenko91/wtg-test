@@ -11,7 +11,7 @@ use App\Services\Reservation\ReservationManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Exceptions\OfferUnavailableException;
 use Tests\TestCase;
 
 class ReservationManagerTest extends TestCase
@@ -63,29 +63,27 @@ class ReservationManagerTest extends TestCase
 
         $this->manager->reserve($this->client(), $offer);
 
+        $this->expectException(OfferUnavailableException::class);
+
         try {
             $this->manager->reserve($this->client(), $offer);
-            $this->fail('The second booking of the last unit should have been rejected.');
-        } catch (HttpException $e) {
-            $this->assertSame(409, $e->getStatusCode());
+        } finally {
+            $this->assertSame(0, $offer->fresh()->available_units);
+            $this->assertSame(1, Reservation::count());
         }
-
-        $this->assertSame(0, $offer->fresh()->available_units);
-        $this->assertSame(1, Reservation::count());
     }
 
     public function test_a_sold_out_offer_cannot_be_reserved(): void
     {
         $offer = $this->offer(availableUnits: 0);
 
+        $this->expectException(OfferUnavailableException::class);
+
         try {
             $this->manager->reserve($this->client(), $offer);
-            $this->fail('A sold out offer should not be bookable.');
-        } catch (HttpException $e) {
-            $this->assertSame(409, $e->getStatusCode());
+        } finally {
+            $this->assertSame(0, Reservation::count());
         }
-
-        $this->assertSame(0, Reservation::count());
     }
 
     public function test_units_are_never_oversold(): void
@@ -96,7 +94,7 @@ class ReservationManagerTest extends TestCase
         for ($i = 0; $i < 5; $i++) {
             try {
                 $this->manager->reserve($this->client(), $offer);
-            } catch (HttpException) {
+            } catch (OfferUnavailableException) {
                 $rejected++;
             }
         }
