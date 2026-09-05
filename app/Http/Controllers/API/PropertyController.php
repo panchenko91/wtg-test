@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\SearchPropertyRequest;
 use App\Http\Resources\PropertyResource;
-use App\Models\Offer;
 use App\Models\Property;
 
 class PropertyController extends Controller

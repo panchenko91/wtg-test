@@ -50,21 +50,6 @@ class Offer extends Model
         return $this->hasMany(Reservation::class);
     }
 
-    public function scopeActive(Builder $query)
-    {
-        return $query
-            ->where('available_units', '>', 0)
-            ->where('expires_at', '>', now());
-    }
-
-    public function scopeMatching(Builder $query, $checkIn = null, $checkOut = null, ?int $guests = null)
-    {
-        return $query
-            ->when($checkIn, fn ($query) => $query->where('check_in', $checkIn))
-            ->when($checkOut, fn ($query) => $query->where('check_out', $checkOut))
-            ->when($guests, fn ($query) => $query->where('max_guests', '>=', $guests));
-    }
-
     public function scopeCheapestPerProperty($builder, $callback = null)
     {
         return $builder->whereExists(function ($builder) use ($callback) {

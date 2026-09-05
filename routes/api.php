@@ -7,3 +7,5 @@ use App\Http\Controllers\API\ImportController;
 
 \Illuminate\Support\Facades\Route::get('properties', [\App\Http\Controllers\API\PropertyController::class, 'search']);
 
+\Illuminate\Support\Facades\Route::post('offers/{offer}/reservations', [\App\Http\Controllers\API\OfferController::class, 'reservation']);
+

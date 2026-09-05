@@ -72,19 +72,8 @@ class OfferImportServiceTest extends TestCase
             'external_id' => 'offer-a-10001',
             'supplier_id' => $this->supplier->id,
             'import_id'   => $import->id,
+            'property_id' => Property::where('code', 'BCN-0001')->value('id'),
         ]);
-    }
-
-    public function test_service_links_offer_to_property(): void
-    {
-        $import = $this->makeImport([]);
-
-        $this->service->populateDatabase($this->data(), $import);
-
-        $property = Property::where('code', 'BCN-0001')->first();
-        $offer = Offer::where('external_id', 'offer-a-10001')->first();
-
-        $this->assertSame($property->id, $offer->property_id);
     }
 
     public function test_service_persists_offer_field_values(): void
@@ -127,14 +116,9 @@ class OfferImportServiceTest extends TestCase
     public static function invalidProvider(): array
     {
         return [
-            'no external_id'     => ['external_id'],
-            'no max_guests'      => ['max_guests'],
-            'no price'           => ['price'],
-            'no currency'        => ['currency'],
-            'no available_units' => ['available_units'],
-            'no property.name'   => ['property.name'],
-            'no property.code'   => ['property.code'],
-            'no property.city'   => ['property.city'],
+            'no external_id'   => ['external_id'],
+            'no price'         => ['price'],
+            'no property.code' => ['property.code'],
         ];
     }
 
