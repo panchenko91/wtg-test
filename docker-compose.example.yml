@@ -28,6 +28,7 @@ services:
       MYSQL_PASSWORD: 12345678
     volumes:
       - wtg_db:/var/lib/mysql
+      - ./docker/build/mysql:/docker-entrypoint-initdb.d
     networks:
       - default
 

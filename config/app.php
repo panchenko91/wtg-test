@@ -67,8 +67,6 @@ return [
 
     'timezone' => 'UTC',
 
-    'base_timezone' => 'Europe/Madrid',
-
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
