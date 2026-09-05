@@ -2,6 +2,7 @@
 
 namespace App\Services\Reservation;
 
+use App\Exceptions\OfferUnavailableException;
 use App\Models\Offer;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,7 @@ class ReservationManager
                 ->first();
 
             if (! $locked || $locked->available_units < 1) {
-                abort(409, __('No units left'));
+                throw OfferUnavailableException::noUnits();
             }
 
             $locked->decrement('available_units');

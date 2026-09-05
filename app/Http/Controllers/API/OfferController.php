@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Exceptions\OfferUnavailableException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\OfferReservationRequest;
 use App\Http\Resources\ReservationResource;
@@ -14,7 +15,14 @@ class OfferController extends Controller
     public function reservation(Offer $offer, OfferReservationRequest $request)
     {
         $transformedData = ReservationTransformer::instance()->transform($request->validated());
-        $reservation = $this->reservationManager()->reserve($transformedData, $offer);
+
+        try {
+            $reservation = $this->reservationManager()->reserve($transformedData, $offer);
+        } catch (OfferUnavailableException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], 422);
+        }
 
         $status = $reservation->wasRecentlyCreated ? 201 : 200;
 
